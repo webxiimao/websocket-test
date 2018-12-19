@@ -42,7 +42,8 @@
 
     function main() {
         var socket = io.connect(location.protocol + "//" + document.domain + ':' + location.port),
-            chatMsgInput = document.querySelector("#chatMsgInput");
+            chatMsgInput = document.querySelector("#chatMsgInput"),
+            chatarea = document.querySelector(".chatarea")
 
         socket.on('client_connect', function (msg) {
             let msgTemplate = document.querySelector("#chatEnterMsg").innerHTML
@@ -52,7 +53,6 @@
         })
 
         socket.on('get_res', function (data) {
-            console.log(data);
             let msgTemplate = document.querySelector("#chatReplyTemplate").innerHTML
             let fragment = msgTemplate.replace(/\[\[name\]\]/, data.data.name).replace(/\[\[time\]\]/, getCurrentTime).replace(/\[\[msg\]\]/, data.data.msg)
             document.querySelector('.chatarea').insertAdjacentHTML('beforeend', fragment)
@@ -64,12 +64,16 @@
         function sendSubmitEmit() {
             socket.emit('msg submit', {'data': chatMsgInput.value})
             chatMsgInput.value = ""
+            setTimeout(()=>{
+                chatarea.scrollTo(0,chatarea.offsetHeight);
+            },200)
         }
 
         function msgInputSubmit(e) {
             var keyNum=window.event ? e.keyCode :e.which;
             if(keyNum==13){
                 sendSubmitEmit()
+
             }
         }
 
