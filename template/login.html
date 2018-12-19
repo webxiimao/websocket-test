@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<body>
+<div id="login-table">
+    <form id="login-form" name="login-form" action="/login" method="post">
+        <div class="form-group">
+            <label for="nickname" class="form-label">请选择您要使用的昵称</label>
+            <input type="text" name="nickname" class="form-control" value="" placeholder="昵称">
+        </div>
+
+        <button type="submit" id="loginSubmit" class="login-btn btn btn-primary">进入聊天室</button>
+    </form>
+</div>
+</body>
+
+{% endblock %}
+
+{% block static_body %}
+<script>
+    window.onload = function(){
+        main()
+    }
+
+    function main() {
+        let submitBtn = document.querySelector('#loginSubmit'),
+            form = document.querySelector('#login-form')
+
+        form.addEventListener('submit',function (e) {
+            let formData = new FormData(this)
+            // e.preventDefault()
+        })
+    }
+</script>
+{% endblock %}

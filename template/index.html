@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+<div class="chatroom">
+    <h1 class="chatroom-title">聊天室 <span>大厅</span></h1>
+    <!--聊天区域-->
+    <div class="chatarea">
+        <!--<div class="chat-enter-msg">-&#45;&#45;xii-&#45;&#45;加入了聊天室</div>-->
+    </div>
+    <!--聊天输入框-->
+    <div class="chat-input">
+        <input id="chatMsgInput" class="form-control" type="text" placeholder="请输入消息内容">
+        <button type="button" id="msgSubmit" class="msg-submit btn btn-primary">提交</button>
+    </div>
+</div>
+</body>
+{% endblock %}
+
+{% block static_body %}
+<script src="https://cdn.bootcss.com/socket.io/2.2.0/socket.io.js"></script>
+
+<script id="chatEnterMsg" type="text/html">
+    <div class="chat-enter-msg">---[[name]]---加入了聊天室</div>
+</script>
+
+<script id="chatReplyTemplate" type="text/html">
+    <div class="chat-reply"><span class="chat-reply-name">[[name]]</span><span class="chat-reply-time">([[time]])</span><span class="chat-reply-msg">[[msg]]</span></div>
+</script>
+
+<script>
+    window.onload = function(){
+        getSessionName()
+        main()
+    }
+
+    function getSessionName() {
+        $.ajax({
+            url:''
+        })
+    }
+
+    function main() {
+        var socket = io.connect(location.protocol + "//" + document.domain + ':' + location.port),
+            chatMsgInput = document.querySelector("#chatMsgInput");
+
+        socket.on('client_connect', function (msg) {
+            let msgTemplate = document.querySelector("#chatEnterMsg").innerHTML
+            let fragment = msgTemplate.replace(/\[\[name\]\]/, msg.data)
+            document.querySelector('.chatarea').insertAdjacentHTML('beforeend', fragment)
+
+        })
+
+        socket.on('get_res', function (data) {
+            console.log(data);
+            let msgTemplate = document.querySelector("#chatReplyTemplate").innerHTML
+            let fragment = msgTemplate.replace(/\[\[name\]\]/, data.data.name).replace(/\[\[time\]\]/, getCurrentTime).replace(/\[\[msg\]\]/, data.data.msg)
+            document.querySelector('.chatarea').insertAdjacentHTML('beforeend', fragment)
+        })
+
+        document.querySelector('#msgSubmit').addEventListener('click',msgBtnSubmit)
+        chatMsgInput.addEventListener('keydown',msgInputSubmit)
+
+        function sendSubmitEmit() {
+            socket.emit('msg submit', {'data': chatMsgInput.value})
+            chatMsgInput.value = ""
+        }
+
+        function msgInputSubmit(e) {
+            var keyNum=window.event ? e.keyCode :e.which;
+            if(keyNum==13){
+                sendSubmitEmit()
+            }
+        }
+
+
+        function msgBtnSubmit(e) {
+            sendSubmitEmit()
+        }
+
+
+        function getCurrentTime() {
+            var date = new Date();//当前时间
+            var month = zeroFill(date.getMonth() + 1);//月
+            var day = zeroFill(date.getDate());//日
+            var hour = zeroFill(date.getHours());//时
+            var minute = zeroFill(date.getMinutes());//分
+            var second = zeroFill(date.getSeconds());//秒
+
+            //当前时间
+            var curTime = date.getFullYear() + "-" + month + "-" + day
+                + " " + hour + ":" + minute + ":" + second;
+
+            return curTime;
+        }
+
+        /**
+          * 补零
+          */
+        function zeroFill(i) {
+            if (i >= 0 && i <= 9) {
+                return "0" + i;
+            } else {
+                return i;
+            }
+
+
+        }
+    }
+</script>
+{% endblock %}

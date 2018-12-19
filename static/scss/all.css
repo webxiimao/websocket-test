@@ -1,0 +1,49 @@
+body {
+  background-color: #2C4254; }
+
+#login-table {
+  width: 300px;
+  margin: 200px auto;
+  padding: 20px;
+  background-color: #fff; }
+  #login-table .form-label {
+    color: #ccc; }
+    #login-table .login-btn {
+      width: 100%; }
+
+.chatroom {
+  width: 800px;
+  margin: 100px auto;
+  background-color: #f6f6f6;
+  padding: 40px; }
+  .chatroom .chatarea {
+    margin-top: 30px;
+    height: 400px;
+    background-color: #EDEDED;
+    padding: 15px;
+    overflow-y: scroll; }
+    .chatroom .chatarea div {
+      margin-bottom: 5px; }
+      .chatroom .chatarea .chat-enter-msg {
+        color: #000;
+        font-size: 14px; }
+        .chatroom .chatarea .chat-reply span {
+          margin-right: 3px; }
+          .chatroom .chatarea .chat-reply span.chat-reply-name {
+            display: inline-block;
+            background-color: #2780E3;
+            text-align: center;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 3px; }
+            .chatroom .chatarea .chat-reply span.chat-reply-time {
+              color: #A7A7A7; }
+  .chatroom .chat-input {
+    position: relative;
+    margin-top: 20px; }
+    .chatroom .chat-input .chat-input-box {
+      padding: 5px 15px; }
+      .chatroom .chat-input .msg-submit {
+        position: absolute;
+        right: 0;
+        top: 0; }

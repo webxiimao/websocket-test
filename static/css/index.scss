@@ -1,0 +1,49 @@
+.chatroom{
+  width: 800px;
+  margin: 100px auto;
+  background-color: #f6f6f6;
+  padding: 40px;
+  .chatarea{
+    margin-top: 30px;
+    height: 400px;
+    background-color: #EDEDED;
+    padding: 15px;
+    overflow-y: scroll;
+    div{
+      margin-bottom: 5px;
+    }
+    .chat-enter-msg{
+      color: #000;
+      font-size: 14px;
+    }
+    .chat-reply{
+      span{
+        margin-right: 3px;
+        &.chat-reply-name{
+          display: inline-block;
+          background-color: #2780E3;
+          text-align: center;
+          color: #fff;
+          padding: 2px 10px;
+          border-radius: 3px;
+        }
+        &.chat-reply-time{
+          color: #A7A7A7;
+          //margin-right: 15px;
+        }
+      }
+    }
+  }
+  .chat-input{
+    position: relative;
+    margin-top: 20px;
+    .chat-input-box{
+      padding: 5px 15px;
+    }
+    .msg-submit{
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+}
