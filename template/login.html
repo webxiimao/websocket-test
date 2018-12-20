@@ -3,10 +3,19 @@
 <body>
 <div id="login-table">
     <form id="login-form" name="login-form" action="/login" method="post">
+        {% if error %}
+        <div class="form-group has-error">
+            <label for="nickname" class="form-label">请选择您要使用的昵称</label>
+            <input type="text" name="nickname" class="form-control" value="" placeholder="昵称" aria-describedby="errorBlock">
+            <span id="errorBlock" class="help-block">{{error}}</span>
+        </div>
+        {% else %}
         <div class="form-group">
             <label for="nickname" class="form-label">请选择您要使用的昵称</label>
             <input type="text" name="nickname" class="form-control" value="" placeholder="昵称">
         </div>
+        {% endif %}
+
 
         <button type="submit" id="loginSubmit" class="login-btn btn btn-primary">进入聊天室</button>
     </form>

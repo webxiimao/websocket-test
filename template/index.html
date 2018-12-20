@@ -3,8 +3,13 @@
 {% block content %}
 <body>
 <div class="chatroom">
-    <h1 class="chatroom-title">聊天室 <span>大厅</span></h1>
+    <h1 class="chatroom-title">聊天室 <span class="chatroom-title-room">大厅</span></h1>
     <!--聊天区域-->
+    <ul class="nav nav-tabs">
+        {% for room in rooms %}
+        <li role="presentation" class="chat-room" data-room={{room}}><a href="#">{{room}}</a></li>
+        {% endfor %}
+    </ul>
     <div class="chatarea">
         <!--<div class="chat-enter-msg">-&#45;&#45;xii-&#45;&#45;加入了聊天室</div>-->
     </div>
@@ -24,26 +29,31 @@
     <div class="chat-enter-msg">---[[name]]---加入了聊天室</div>
 </script>
 
+<script id="chatLeaveMsg" type="text/html">
+    <div class="chat-enter-msg">---[[name]]---离开了聊天室</div>
+</script>
+
 <script id="chatReplyTemplate" type="text/html">
     <div class="chat-reply"><span class="chat-reply-name">[[name]]</span><span class="chat-reply-time">([[time]])</span><span class="chat-reply-msg">[[msg]]</span></div>
 </script>
 
 <script>
     window.onload = function(){
-        getSessionName()
+        // getSessionName()
         main()
-    }
-
-    function getSessionName() {
-        $.ajax({
-            url:''
-        })
     }
 
     function main() {
         var socket = io.connect(location.protocol + "//" + document.domain + ':' + location.port),
             chatMsgInput = document.querySelector("#chatMsgInput"),
-            chatarea = document.querySelector(".chatarea")
+            chatarea = document.querySelector(".chatarea"),
+            roomsNavs = document.querySelectorAll(".chat-room"),
+            room = "{{rooms[0]}}",
+            classTitleRoom = document.querySelector('.chatroom-title-room')
+            self = this;
+
+        init()
+        joinRoom()
 
         socket.on('client_connect', function (msg) {
             let msgTemplate = document.querySelector("#chatEnterMsg").innerHTML
@@ -58,13 +68,47 @@
             document.querySelector('.chatarea').insertAdjacentHTML('beforeend', fragment)
         })
 
+        socket.on('leave_room',function (msg) {
+            let msgTemplate = document.querySelector("#chatLeaveMsg").innerHTML
+            let fragment = msgTemplate.replace(/\[\[name\]\]/, msg.data)
+            document.querySelector('.chatarea').insertAdjacentHTML('beforeend', fragment)
+        })
+
         document.querySelector('#msgSubmit').addEventListener('click',msgBtnSubmit)
+
         chatMsgInput.addEventListener('keydown',msgInputSubmit)
+
+        roomsNavs.forEach(function (nav) {
+            nav.addEventListener('click',function () {
+                leaveRoom()
+                roomsNavs.forEach(function (brotherNav) {
+                    brotherNav.classList.remove('active')
+                })
+                this.classList.add('active')
+                room = this.dataset.room
+                joinRoom()
+            })
+        })
+
+        function init() {
+            roomsNavs[0].classList.add('active')
+
+        }
+
+        function joinRoom() {
+            socket.emit('join room',{'room':room})
+            classTitleRoom.innerHTML = room
+        }
+
+        function leaveRoom() {
+            socket.emit('leave room',{'room':room})
+            chatarea.innerHTML = ""
+        }
 
         function sendSubmitEmit() {
             socket.emit('msg submit', {'data': chatMsgInput.value})
             chatMsgInput.value = ""
-            setTimeout(()=>{
+            setTimeout(function(){
                 chatarea.scrollTo(0,chatarea.offsetHeight);
             },200)
         }
@@ -73,7 +117,6 @@
             var keyNum=window.event ? e.keyCode :e.which;
             if(keyNum==13){
                 sendSubmitEmit()
-
             }
         }
 
